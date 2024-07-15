@@ -28,5 +28,5 @@
 3.NOW run the INDEX.JS using node or nodemon, or run `npm start`
 
 <h2>Caution</h2>
-<p>Here the images of movie poster are used as links from other websites like pinterest...</p>
+<p>Here the images are used as links from other websites like google, pinterest...</p>
 
