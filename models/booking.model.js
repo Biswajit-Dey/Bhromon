@@ -2,21 +2,32 @@ import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema(
   {
-    packageDetails: {
-      type: mongoose.ObjectId,
-      ref: "Package",
+    Destination: {
+      type: String,
       required: true,
     },
-    buyer: {
-      type: mongoose.ObjectId,
+    Buyer: {
+      type: String,
       ref: "User",
       required: true,
     },
-    totalPrice: {
+    Days: {
       type: Number,
       required: true,
     },
-    persons: {
+    Nights: {
+      type: Number,
+      required: true,
+    },
+    Price: {
+      type: Number,
+      required: true,
+    },
+    TotalPrice: {
+      type: Number,
+      required: true,
+    },
+    Persons: {
       type: Number,
       required: true,
     },

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import ejs from "ejs";
 import multer from "multer";
 import session from "express-session";
+import jwt from "jsonwebtoken";
 
 import authRoute from "./routes/auth.route.js";
 import userRoute from "./routes/user.route.js";
@@ -34,7 +35,9 @@ app.use(express.json());
 
 app.use(express.json());
 app.use(cookieParser());
-
+app.use("/about",(req,res)=>{
+  res.render("about");
+})
 
 //set view engine
 app.set("view engine", "ejs");
@@ -93,14 +96,26 @@ app.get("/api/auth/dest",async (req, res) => {
   res.render("dest", { destination });
 });
 
-app.get("/book-package", (req, res) => {
-  res.render("booking", { title: "Booking" });
+app.get("/book-package", async (req, res) => {
+  const ptitle= req.query.title;
+  const pack = await Tour.findOne({ title: ptitle });
+  console.log(pack);
+
+  const ticket= req.cookies.access_token;
+  const val= jwt.verify(ticket, process.env.JWT_SECRET);
+  console.log(val);
+  const user = val.email;
+  console.log(user);
+  res.render("booking", { pack, user });
 });
 
 app.get("/viewdestination", (req, res) => {
   res.render("destination_view");
 });
 
+app.get("/show", (req, res) => {
+  res.render("showbook", { title: "Bhromon" });
+});
 
 app.use("/api/tour", tourRoute);
 app.use("/api/auth", authRoute);

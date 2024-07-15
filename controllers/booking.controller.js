@@ -1,6 +1,7 @@
 import Booking from "../models/booking.model.js";
-import Package from "../models/package.model.js";
+//import Package from "../models/package.model.js";
 import Tour from "../models/tour.model.js";
+import User from "../models/user.model.js";
 import { ObjectId } from "mongodb";
 
 //select destination
@@ -25,50 +26,28 @@ export const describeDestination = async (req, res) => {
 
 export const showTourController = async (req, res) => {
   try {
-      console.log("Request received");
-      const id = req.query._id;
-      console.log("ID from query:", id);
-
-      if (!id) {
-          throw new Error("ID is missing in the query parameters");
-      }
-
-      const foundMovie = await Tour.findById(id);
-      if (!foundMovie) {
-          throw new Error("No Movies Found");
-      }
-
-      res.render('destination_view', { foundMovie });
+      const tour = await Tour.findOne({ title: req.query.title });
+      if (tour) {
+      return res.render('destination_view', { tour });
+      }else {
+      res.status(200).send({
+        success: false,
+        message: "Destination Not Found! Please Choose a Right Destination!",
+      });
+    }
   } catch (error) {
-      console.error(error.message);
-      res.status(400).send(error.message);
+    console.log(error);
   }
 };
-
 
 
 
 //book package
 export const bookPackage = async (req, res) => {
   try {
-    const { packageDetails, buyer, totalPrice, persons, date } = req.body;
+    const { Destination, Buyer, Days, Nights, Price, TotalPrice, Persons, date } = req.body;
 
-    if (req.user.id !== buyer) {
-      return res.status(401).send({
-        success: false,
-        message: "You can only buy on your account!",
-      });
-    }
-
-    if (!packageDetails || !buyer || !totalPrice || !persons || !date) {
-      return res.status(200).send({
-        success: false,
-        message: "All fields are required!",
-      });
-    }
-
-    const validPackage = await Package.findById(packageDetails);
-
+    const validPackage = await User.findOne(req.query.user )
     if (!validPackage) {
       return res.status(404).send({
         success: false,
@@ -76,13 +55,18 @@ export const bookPackage = async (req, res) => {
       });
     }
 
+    if (!Destination || !Buyer || !TotalPrice || !Persons || !date) {
+      return res.status(200).send({
+        success: false,
+        message: "All fields are required!",
+      });
+    }
+
+
     const newBooking = await Booking.create(req.body);
 
     if (newBooking) {
-      return res.status(201).send({
-        success: true,
-        message: "Package Booked!",
-      });
+      res.render("home");
     } else {
       return res.status(500).send({
         success: false,
@@ -144,7 +128,7 @@ export const getAllBookings = async (req, res) => {
       .populate("packageDetails")
       // .populate("buyer", "username email")
       .populate({
-        path: "buyer",
+        path: "Buyer",
         match: {
           $or: [
             { username: { $regex: searchTerm, $options: "i" } },

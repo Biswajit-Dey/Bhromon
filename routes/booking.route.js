@@ -21,7 +21,7 @@ router.post('/destination', requireSignIn, describeDestination);
 router.get('/tourview', requireSignIn, showTourController);
 
 // book package
-router.post("/book-package/:packageId", requireSignIn, bookPackage);
+router.post("/book-package", requireSignIn, bookPackage);
 
 //get all current bookings admin
 router.get("/get-currentBookings", requireSignIn, isAdmin, getCurrentBookings);

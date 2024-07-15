@@ -43,10 +43,8 @@ export const signupController = async (req, res) => {
     const token = newUser.createJWT();
     console.log("My JWT is", token);
 
-    return res.status(201).send({
-      message: "User Created Successfully",
-      success: true,
-    });
+    res.render("login", { title: "Bhromon" });
+    
   } catch (error) {
     console.log(error);
     return res.status(500).send({
